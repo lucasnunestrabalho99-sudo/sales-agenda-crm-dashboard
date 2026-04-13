@@ -1,0 +1,9 @@
+streamlit
+pandas
+plotly
+numpy
+python-dateutil
+python-dotenv
+pyodbc
+openpyxl
+xlsxwriter
