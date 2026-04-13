@@ -37,10 +37,13 @@ def gerar_dados_ficticios():
         if np.random.rand() > 0.8: # 20% nunca comprou
             dt_ult_ped = pd.NaT
             
+        cod_vend_sorteado = np.random.choice(vendedores)
+            
         clientes_data.append({
             'Cod Clien': cod_clien,
             'Cliente': f'CLIENTE FICTICIO {cod_clien} LTDA',
-            'Cod Vend': np.random.choice(vendedores),
+            'Cod Vend': cod_vend_sorteado,
+            'Vendedor': f'VENDEDOR {cod_vend_sorteado}', # <-- CORREÇÃO: Coluna adicionada
             'Segmento': np.random.choice(['VAREJO', 'ATACADO', 'DISTRIBUIDOR', 'FARMACIA', 'MERCADO']),
             'AreaVenda': np.random.choice(['ZONA NORTE', 'ZONA SUL', 'CENTRO', 'BAIXADA', 'INTERIOR']),
             'Municipio': np.random.choice(['RIO DE JANEIRO', 'NOVA IGUACU', 'DUQUE DE CAXIAS', 'NITEROI', 'SAO GONCALO']),
@@ -62,7 +65,6 @@ def gerar_dados_ficticios():
     motivos = ['COTAÇÃO', 'SEM INTERESSE', 'CLIENTE NAO ATENDE', 'COMPROU CONCORRENTE', 'REAGENDAMENTO', 'VENDA']
     
     hoje = pd.Timestamp.today()
-    inicio_hist = hoje - pd.DateOffset(months=6)
     
     for _ in range(qtd_contatos):
         cod_clien = np.random.choice(df_info['Cod Clien'])
@@ -87,6 +89,7 @@ def gerar_dados_ficticios():
             
         contatos_data.append({
             'CodClien': cod_clien,
+            'Cliente': f'CLIENTE FICTICIO {cod_clien} LTDA', # <-- CORREÇÃO: Coluna adicionada
             'UsuarioAgenda': vend,
             'UsuarioEncer': vend if sit == 'EN' else '',
             'DataEncer': data_encer,
@@ -99,7 +102,6 @@ def gerar_dados_ficticios():
         
     df_agenda = pd.DataFrame(contatos_data)
     return df_agenda, df_info
-
 # ==========================================
 
 # --- Funções Auxiliares (Persistência e Excel) ---
