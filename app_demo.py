@@ -421,7 +421,7 @@ with st.spinner("Gerando dados fictícios para DEMO..."):
     df_base = carregar_dados_agenda()
     df_info_cliente = carregar_dados_base_cliente()
 
-df_enrich = df_info_cliente[['Cod Clien', 'DiasSemCompra', 'Cod Vend']].drop_duplicates(subset=['Cod Clien'])
+df_enrich = df_info_cliente[['Cod Clien', 'DiasSemCompra', 'Cod Vend', 'DtUltPed']].drop_duplicates(subset=['Cod Clien'])
 df_base = df_base.merge(df_enrich, left_on='CodClien', right_on='Cod Clien', how='left')
 df_base['DiasSemCompra'] = df_base['DiasSemCompra'].fillna(0).astype(int)
 df_base['Cod Vend'] = df_base['Cod Vend'].fillna('') 
