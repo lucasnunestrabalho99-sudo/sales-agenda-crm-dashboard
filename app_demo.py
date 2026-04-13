@@ -284,7 +284,16 @@ def gerar_sugestao_agenda(df_base_agenda, df_info_clientes_raw, vendedor_agenda,
         df_hist_vendedor = pd.DataFrame(columns=['Cod Clien', 'Ult_Motivo_Vend', 'Dt_Ult_Motivo_Vend', 'Ult_Obs_Vend'])
 
     df_atrasados_raw = df_base_agenda[(df_base_agenda['UsuarioAgenda'] == vendedor_agenda) & (df_base_agenda['Sit'] == 'AB') & (df_base_agenda['DataAgenda'] < ts_hoje)].copy().sort_values('DataAgenda').drop_duplicates('CodClien')
-    df_atrasados_full = df_atrasados_raw.merge(df_info_clientes, left_on='CodClien', right_on='Cod Clien', how='left').merge(df_hist_vendedor, on='Cod Clien', how='left')
+    
+    # --- BLINDAGEM CONTRA KEYERROR DE SUFIXOS (_x, _y) ---
+    if 'Cod Clien' in df_atrasados_raw.columns:
+        df_atrasados_raw = df_atrasados_raw.drop(columns=['Cod Clien'])
+        
+    df_atrasados_full = df_atrasados_raw.merge(
+        df_info_clientes, left_on='CodClien', right_on='Cod Clien', how='left'
+    ).merge(
+        df_hist_vendedor, on='Cod Clien', how='left'
+    )
     lista_ids_atrasados = df_atrasados_full['CodClien'].unique()
     diagnostico["Total Atrasados"] = len(lista_ids_atrasados)
     
