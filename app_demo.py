@@ -692,7 +692,14 @@ with tab3:
         df_view_final = pd.merge(df_view, df_info_cliente[['Cod Clien', 'Cod Vend', 'DtUltPed']].rename(columns={'Cod Clien': 'CodClien', 'Cod Vend': 'Cod Vend Base', 'DtUltPed': 'Data Ult Pedido'}), on='CodClien', how='left').sort_values(by=['DataAgenda', 'CodClien']).drop_duplicates(subset=['DataAgenda', 'UsuarioAgenda', 'CodClien'])
         df_view_final['CodClien'] = df_view_final['CodClien'].astype(str)
         st.info(f"Exibindo {len(df_view_final)} agendamentos.")
-        st.dataframe(df_view_final[['DataAgenda', 'UsuarioAgenda', 'Cliente', 'CodClien', 'Cod Vend Base', 'Data Ult Pedido', 'Ultimo Motivo', 'Data Ult Contato', 'Obs']], use_container_width=True)
+        
+        # Lista de colunas que queremos mostrar
+        colunas_desejadas = ['DataAgenda', 'UsuarioAgenda', 'Cliente', 'CodClien', 'Cod Vend Base', 'Data Ult Pedido', 'Ultimo Motivo', 'Data Ult Contato', 'Obs']
+        
+        # Filtra apenas as colunas que realmente existem no DataFrame no momento
+        colunas_disponiveis = [c for c in colunas_desejadas if c in df_view_final.columns]
+        
+        st.dataframe(df_view_final[colunas_disponiveis], use_container_width=True)
 
 with tab4:
     st.subheader("Resumo por Cliente")
