@@ -622,8 +622,17 @@ with tab2:
 
         current_cod_clien = lista_codigos_cliente[st.session_state.cliente_index]
         info_cliente_atual_df = df_info_cliente[df_info_cliente['Cod Clien'] == current_cod_clien]
-        cliente_detalhe = info_cliente_atual_df.iloc[0] if not info_cliente_atual_df.empty else df_base[df_base['CodClien'] == current_cod_clien].iloc[0]
-        vendedores_assoc = info_cliente_atual_df['Vendedor'].unique() if not info_cliente_atual_df.empty else ["N/D"]
+        
+        if not info_cliente_atual_df.empty:
+            cliente_detalhe = info_cliente_atual_df.iloc[0]
+            # Verifica se a coluna existe antes de tentar puxar, evitando o KeyError
+            if 'Vendedor' in info_cliente_atual_df.columns:
+                vendedores_assoc = info_cliente_atual_df['Vendedor'].unique()
+            else:
+                vendedores_assoc = [f"Vend. Fictício {cliente_detalhe.get('Cod Vend', '')}"]
+        else:
+            cliente_detalhe = df_base[df_base['CodClien'] == current_cod_clien].iloc[0]
+            vendedores_assoc = ["N/D"]
 
         col_nav2.subheader(f"({current_cod_clien}) - {cliente_detalhe['Cliente']} ({st.session_state.cliente_index + 1}/{total_clientes})")
         
