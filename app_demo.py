@@ -202,9 +202,22 @@ def to_excel_com_imagens(df_notas):
     return output.getvalue()
 
 def calcular_resumo_power_query(df_input_rows, df_base_full, df_info_clientes):
-    df_structure = df_input_rows[['UsuarioEncer', 'CodClien', 'Cliente']].drop_duplicates()
-    if df_structure.empty: return pd.DataFrame(), []
+    # Blindagem 1: Se a tabela chegar vazia, já encerra sem erro
+    if df_input_rows.empty: return pd.DataFrame(), []
 
+    # Blindagem 2: Verifica se a coluna Cliente existe antes de fatiar
+    colunas_base = ['UsuarioEncer', 'CodClien']
+    if 'Cliente' in df_input_rows.columns:
+        df_structure = df_input_rows[colunas_base + ['Cliente']].drop_duplicates()
+    else:
+        # Se não existir, pega só o que tem e busca o nome na base de informações
+        df_structure = df_input_rows[colunas_base].drop_duplicates()
+        temp_clientes = df_info_clientes[['Cod Clien', 'Cliente']].drop_duplicates('Cod Clien')
+        df_structure = df_structure.merge(temp_clientes, left_on='CodClien', right_on='Cod Clien', how='left')
+        df_structure = df_structure.drop(columns=['Cod Clien'], errors='ignore')
+        df_structure['Cliente'] = df_structure['Cliente'].fillna('Cliente S/ Cadastro')
+
+    # Daqui para baixo o código segue normal...
     df_hist_pivot = df_input_rows[df_input_rows['Sit'] == 'EN'].copy()
     df_hist_pivot['Motivo2'] = df_hist_pivot['Motivo_Final']
     
